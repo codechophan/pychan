@@ -9,3 +9,4 @@ class Format(Enum):
     Json = "json"
     Excel = "com.crealytics.spark.excel"
     Jdbc = "jdbc"
+    Xml = "xml"

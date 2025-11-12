@@ -62,13 +62,10 @@ class Dataset:
         
         if path:
             reader = reader.option("path", path)
-        
         if format:
             reader = reader.format(format.value)
-        
         if schema:
             reader = reader.schema(schema)
-        
         if options:
             reader = reader.options(**options)
         
@@ -114,7 +111,6 @@ class Dataset:
         
         if schema:
             reader = reader.schema(schema)
-        
         if options:
             reader = reader.options(**options)
         
@@ -122,7 +118,7 @@ class Dataset:
     
     def readJson(
         self,
-        path: Optional[String] = None,
+        path: String,
         schema: Optional[StructType | String] = None,
         options: Optional[Map[String, String]] = None
     ) -> DataFrame:
@@ -141,7 +137,6 @@ class Dataset:
         
         if schema:
             reader = reader.schema(schema)
-        
         if options:
             reader = reader.options(**options)
         
