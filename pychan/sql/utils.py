@@ -16,18 +16,30 @@ class Utils:
 class MergeUtils:
     def _genIdCondition(
         self,
-        idColsName: List[String]
+        idColsName: List[String],
+        isNullable: Optional[List[String]] = None
     ) -> String:
         """
         >>> idColsName: List[String] = ["BELNR", "DOCLN", "RCLNT", "RLDNR", "RBUKRS", "GJAHR"]
         >>> chanutils.merge._genIdCondition(idColsName)
         "target.BELNR = source.BELNR AND target.DOCLN = source.DOCLN AND target.RCLNT = source.RCLNT AND target.RLDNR = source.RLDNR AND target.RBUKRS = source.RBUKRS AND target.GJAHR = source.GJAHR"
         """
+        if not isNullable:
+            return (
+                " AND "
+                    .join([
+                        f"target.{idColName} = source.{idColName}"
+                        for idColName in idColsName
+                    ])
+            )
+        
         return (
             " AND "
                 .join([
                     f"target.{idColName} = source.{idColName}"
-                    for idColName in idColsName
+                    if nullable == "0"
+                    else f"target.{idColName} <=> source.{idColName}"
+                    for (idColName, nullable) in zip(idColsName, isNullable)
                 ])
         )
     
@@ -53,6 +65,7 @@ class MergeUtils:
     def genCondition(
         self,
         idColsName: List[String],
+        isNullable: Optional[List[String]] = None,
         partitionColsName: Optional[List[String]] = None,
         partitionValues: Optional[List[String]] = None
     ) -> String:
@@ -72,7 +85,7 @@ class MergeUtils:
         >>> condition
         "target.BELNR = source.BELNR AND target.DOCLN = source.DOCLN AND target.RCLNT = source.RCLNT AND target.RLDNR = source.RLDNR AND target.RBUKRS = source.RBUKRS AND target.GJAHR = source.GJAHR"
         """
-        idCondition: String = self._genIdCondition(idColsName)
+        idCondition: String = self._genIdCondition(idColsName) if not isNullable else self._genIdCondition(idColsName, isNullable)
         
         if (
             partitionColsName
