@@ -28,7 +28,7 @@ class MergeUtils:
             return (
                 " AND "
                     .join([
-                        f"target.{idColName} = source.{idColName}"
+                        f"target.`{idColName}` = source.`{idColName}`"
                         for idColName in idColsName
                     ])
             )
@@ -36,9 +36,9 @@ class MergeUtils:
         return (
             " AND "
                 .join([
-                    f"target.{idColName} = source.{idColName}"
+                    f"target.`{idColName}` = source.`{idColName}`"
                     if nullable == "0"
-                    else f"target.{idColName} <=> source.{idColName}"
+                    else f"target.`{idColName}` <=> source.`{idColName}`"
                     for (idColName, nullable) in zip(idColsName, isNullable)
                 ])
         )
@@ -112,7 +112,7 @@ class MergeUtils:
         return (
             ", "
                 .join([
-                    f"{colName} = source.{colName}"
+                    f"`{colName}` = source.`{colName}`"
                     for colName in colsName
                     if colName not in ignoreColsName
                 ])
@@ -125,9 +125,9 @@ class MergeUtils:
         "(BELNR, DOCLN, RCLNT, RLDNR, RBUKRS, GJAHR, __created_timestamp) VALUES (source.BELNR, source.DOCLN, source.RCLNT, source.RLDNR, source.RBUKRS, source.GJAHR, source.__created_timestamp)"
         """
         return (
-            f"({', '.join(colsName)}) "
+            f"({', '.join([f'`{colName}`' for colName in colsName])}) "
             "VALUES "
-            f"({', '.join([f'source.{colName}' for colName in colsName])})"
+            f"({', '.join([f'source.`{colName}`' for colName in colsName])})"
         )
 
 chanutils = Utils()
